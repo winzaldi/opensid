@@ -47,10 +47,12 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
 	{
 		parent::__construct();
 		$this->load->model('tanda_tangan_model');
-//		$this->load->model('surat_model');
+		$this->load->model('permohonan_surat_model');
         $this->load->helper('download');
 		$this->load->model('pamong_model');
 		$this->load->model('config_model');
+        $this->load->model('mailbox_model');
+
 		$this->modul_ini = 4;
 		$this->sub_modul_ini = 135;
 		$this->load->library(array('bsrelib','pdf','pdfpdi','ciqrcode'));
@@ -209,6 +211,9 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
         $pdf->AddPage('P', 'F4', TRUE, FALSE);
 
 
+        //print_r($result);
+        //die($this->db->last_query());
+        //die();
         if($ttd['id_format_surat']==15){
             $this->surat_ket_usaha($pdf, $halaman, $qr_image, $ttd);
         }else if($ttd['id_format_surat']==15){
@@ -228,11 +233,25 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
             //jika berhasil,update table tanda tangan
             $data=array('status'=> 1,'file_signed'=>substr($ttd[file_surat], 0, strpos($ttd[file_surat], ".") - 1) .'_signed'. '.pdf');
             $this->tanda_tangan_model->update($ttd['id'],$data);
+            $data=array('tte'=> 'Y');
+            $this->tanda_tangan_model->update_log_status($ttd['id_log'],$data);
             //status surat jika ada di mandiri - belum
-
-            //notifikasi - belum
-
+            $result = $this->tanda_tangan_model->cekPermohonan($ttd);
+            if(!empty($result)){
+                //update status surat mandiri
+                $this->permohonan_surat_model->update($result->id,array("status"=>"3"));
+                //insert pesan ke masyarakat
+                $post['email'] = $ttd['nik_pd']; // kolom email diisi nik untuk pesan
+                $post['owner'] = $ttd['nama_pd'];
+                $post['tipe'] = 1;
+                $post['status'] = 2;
+                $post['id_artikel'] = 775;
+                $link = base_url("/desa/tte/signed/substr($ttd[file_surat], 0, strpos($ttd[file_surat], ".") - 1) .'_signed'. '.pdf')".'_signed'. '.pdf');
+                $post['komentar'] = "Surat bapak/ibuk sudah di tanda tangani, Silahkan download di link berikut $link";
+                $this->mailbox_model->insert($post);
+            }
         }
+        redirect("tanda_tangan_pimpinan");
 
     }
 
