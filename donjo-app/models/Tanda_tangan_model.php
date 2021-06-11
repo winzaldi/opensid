@@ -301,9 +301,9 @@
         $indikatorSukses = is_null($uploadError)
             && $this->db->query("insert into tanda_tangan_surat(`id_format_surat`, `id_pend`, `id_pamong`, `id_user`, `tanggal`, 
                 `bulan`, `tahun`, `no_surat`, `nama_surat`, `lampiran`, `nik_non_warga`, `nama_non_warga`, 
-                `keterangan`,status,file_surat)
+                `keterangan`,status,file_surat,id_log)
                 select `id_format_surat`, `id_pend`, `id_pamong`, `id_user`, `tanggal`, `bulan`, `tahun`, `no_surat`, 
-                   `nama_surat`, `lampiran`, `nik_non_warga`, `nama_non_warga`, `keterangan`,'0','$namaFileUnik' 
+                   `nama_surat`, `lampiran`, `nik_non_warga`, `nama_non_warga`, `keterangan`,'0','$namaFileUnik',id 
                    from log_surat  where id = $idlog_surat ");
 
         // transaction selesai
@@ -317,8 +317,11 @@
 
     public function get_data_surat($id=0)
     {
-        $sql = "SELECT u.*,p.pamong_nama,p.pamong_nik,p.jabatan FROM tanda_tangan_surat u 
-	            LEFT JOIN tweb_desa_pamong p on u.id_pamong = p.pamong_id WHERE id = ?";
+        $sql = "SELECT u.*,p.pamong_nama,p.pamong_nik,p.jabatan,
+                 pd.nama as nama_pd,pd.nik as nik_pd 
+                    FROM tanda_tangan_surat u 
+	            LEFT JOIN tweb_desa_pamong p on u.id_pamong = p.pamong_id 
+	            LEFT JOIN tweb_penduduk pd on pd.id = u.id_pend  WHERE id = ?";
         $query = $this->db->query($sql,$id);
         $data = $query->row_array();
         return $data;
@@ -328,6 +331,38 @@
     {
         $this->db->where('id', $id);
         $this->db->update('tanda_tangan_surat', $data);
+    }
+
+    public function update_log_status($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->update('log_surat', $data);
+    }
+
+    public function cekPermohonan($ttd_model){
+        $result = $this->db
+            ->select('u.*')
+            ->where('id_pemohon', $ttd_model['id_pend'])
+            ->where('status', '2')
+            ->from('permohonan_surat u')
+            ->order_by('updated_at', 'DESC')
+            ->get()->result();
+
+        foreach($result as $p){
+            $form  = json_decode($p->isian_form);
+            die(
+                $ttd_model['id_format_surat'].'|'.$form->id_surat
+                .'#'. $ttd_model['no_surat'].'|'.$form->nomor
+                .'#'. $ttd_model['id_pamong'].'|'.$form->pamong_id
+            );
+            if($ttd_model['id_format_surat']==$form->id_surat
+              && $ttd_model['no_surat']==$form->nomor
+                && $ttd_model['id_pamong']==$form->pamong_id){
+                  return  $p; // return record
+            }
+        }
+
+        return null;
     }
 
 
