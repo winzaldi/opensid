@@ -124,7 +124,7 @@
 																		<a href="<?= site_url("tanda_tangan/edit_keterangan/$data[id]")?>" title="Ubah Data" data-remote="false" data-toggle="modal" data-target="#modalBox" data-title="Ubah Keterangan" class="btn bg-orange btn-flat btn-sm"><i class="fa fa-edit"></i></a>
 																		<?php
                                                                           if(!empty($data[file_signed])){
-                                                                            echo '<a href='.base_url(LOKASI_TTE_SIGNED.$data[file_signed]).' class="btn btn-social btn-flat bg-light-blue btn-sm" title="Unduh Surat" target="_blank"><i class="fa fa-file-pdf-o"></i> SIGNED</a>';
+                                                                            echo '<a href='.base_url(LOKASI_TTE_SIGNED.$data[file_signed]).' class="btn btn-social btn-flat bg-red-active btn-sm" title="Unduh Surat" target="_blank"><i class="fa fa-file-pdf-o"></i> SIGNED</a>';
                                                                           }else{
                                                                             echo '<a href="#" data-href='.site_url("tanda_tangan/delete/$p/$o/$data[id]").' class="btn bg-maroon btn-flat btn-sm"  title="Hapus Data" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash-o"></i></a>';
                                                                           }
