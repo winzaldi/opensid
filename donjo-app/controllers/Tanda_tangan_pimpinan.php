@@ -229,7 +229,12 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
         }
 
         $result = $this->bsrelib->sign($nik,$passprhase);
+
         if($result==1){
+            //
+            $_SESSION['success'] = $result ? 1 : -1;
+            $_SESSION['error_msg'] = $_SESSION['success'] === 1 ? NULL : ' -> '.$this->bsrelib->getError();
+
             //jika berhasil,update table tanda tangan
             $data=array('status'=> 1,'file_signed'=>substr($ttd[file_surat], 0, strpos($ttd[file_surat], ".") - 1) .'_signed'. '.pdf');
             $this->tanda_tangan_model->update($ttd['id'],$data);
@@ -243,10 +248,11 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
                 //insert pesan ke masyarakat
                 $post['email'] = $ttd['nik_pd']; // kolom email diisi nik untuk pesan
                 $post['owner'] = $ttd['nama_pd'];
-                $post['tipe'] = 1;
+                $post['tipe'] = 2;
+                $post['subjek'] = 'Surat Sudah Bisa Diambil';
                 $post['status'] = 2;
                 $post['id_artikel'] = 775;
-                $link = base_url("/desa/tte/signed/substr($ttd[file_surat], 0, strpos($ttd[file_surat], ".") - 1) .'_signed'. '.pdf')".'_signed'. '.pdf');
+                $link = base_url("/desa/tte/signed/".substr($ttd[file_surat], 0, strpos($ttd[file_surat], ".") - 1) .'_signed'. '.pdf');
                 $post['komentar'] = "Surat bapak/ibuk sudah di tanda tangani, Silahkan download di link berikut $link";
                 $this->mailbox_model->insert($post);
             }
