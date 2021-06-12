@@ -321,7 +321,7 @@
                  pd.nama as nama_pd,pd.nik as nik_pd 
                     FROM tanda_tangan_surat u 
 	            LEFT JOIN tweb_desa_pamong p on u.id_pamong = p.pamong_id 
-	            LEFT JOIN tweb_penduduk pd on pd.id = u.id_pend  WHERE id = ?";
+	            LEFT JOIN tweb_penduduk pd on pd.id = u.id_pend  WHERE u.id = ?";
         $query = $this->db->query($sql,$id);
         $data = $query->row_array();
         return $data;
@@ -350,11 +350,11 @@
 
         foreach($result as $p){
             $form  = json_decode($p->isian_form);
-            die(
-                $ttd_model['id_format_surat'].'|'.$form->id_surat
-                .'#'. $ttd_model['no_surat'].'|'.$form->nomor
-                .'#'. $ttd_model['id_pamong'].'|'.$form->pamong_id
-            );
+//            die(
+//                $ttd_model['id_format_surat'].'|'.$form->id_surat
+//                .'#'. $ttd_model['no_surat'].'|'.$form->nomor
+//                .'#'. $ttd_model['id_pamong'].'|'.$form->pamong_id
+//            );
             if($ttd_model['id_format_surat']==$form->id_surat
               && $ttd_model['no_surat']==$form->nomor
                 && $ttd_model['id_pamong']==$form->pamong_id){
