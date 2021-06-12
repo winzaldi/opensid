@@ -114,14 +114,15 @@
 																	<td><?= $data['no']?></td>
 																	<td nowrap>
 																		<?php
-																			if (is_file($theFile)): ?>
-																				<a href="<?= base_url(LOKASI_TTE_MAIL.$berkas)?>" class="btn btn-social btn-flat bg-light-blue btn-sm" title="Unduh Surat" target="_blank"><i class="fa fa-file-pdf-o"></i> Preview</a>
-																			<?php	endif; ?>
-																		<?php
-																			if (is_file($lampiran)): ?>
-																				<a href="<?= base_url(LOKASI_ARSIP.$data['lampiran'])?>" target="_blank" class="btn btn-social btn-flat bg-olive btn-sm" title="Unduh Lampiran"><i class="fa fa-paperclip"></i> Lampiran</a>
-																			<?php	endif; ?>
-																		<a href="<?= site_url("tanda_tangan_pimpinan/tanda_tangan/$data[id]")?>" title="Tanda Tangan" data-remote="false" data-toggle="modal" data-target="#modalBox" data-title="Tanda Tangan Elektronik" class="btn bg-orange btn-flat btn-sm"><i class="fa fa-pencil"></i></a>
+                                                                            if(!empty($data[file_signed])){
+                                                                                echo '<a href='.base_url(LOKASI_TTE_SIGNED.$data[file_signed]).' class="btn btn-social btn-flat bg-red-active btn-sm" title="Unduh Surat" target="_blank"><i class="fa fa-file-pdf-o"></i> SIGNED</a>';
+                                                                            }else{
+                                                                                if (is_file($theFile)): ?>
+                                                                                    <a href="<?= base_url(LOKASI_TTE_MAIL.$berkas)?>" class="btn btn-social btn-flat bg-light-blue btn-sm" title="Unduh Surat" target="_blank"><i class="fa fa-file-pdf-o"></i> Preview</a>
+                                                                                <?php	endif;
+                                                                                echo '<a href='.site_url("tanda_tangan_pimpinan/tanda_tangan/$data[id]").' title="Tanda Tangan" data-remote="false" data-toggle="modal" data-target="#modalBox" data-title="Tanda Tangan Elektronik" class="btn bg-orange btn-flat btn-sm"><i class="fa fa-pencil"></i></a>';
+                                                                            }
+                                                                          ?>
 																	</td>
 																	<td><?= $data['kode_surat']?></td>
 																	<td><?= $data['no_surat']?></td>
