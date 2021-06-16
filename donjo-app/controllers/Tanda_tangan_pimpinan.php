@@ -185,7 +185,7 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
         $qr_image =$ttd['id'].'-'.$ttd['bulan'] . '_'.$ttd['tahun'] . '_'  . str_replace('/', '-', $ttd['nama_surat']) .$ttd['nomor_surat']. '.png';
         //print_r($qr_image);
         //$params['data'] = 'Dari: ' . $nm_instansi . ' -- ' . 'No. Agenda: ' . $no_agenda . ' -- ' . 'Tgl: ' . tgl_login($create_date);
-        $params['data'] = $ttd['id'].' - '.$ttd['tanggal'].' - '.$ttd['nama_surat'].' - '.$ttd['nomor_surat'];
+        $params['data'] = $ttd['nomor_surat'].' - '.$ttd['tanggal'].' - '.substr($ttd[nam_surat], 0, strpos($ttd[nama_surat], ".") - 1) ;
         $params['level'] = 'H';
         $params['size'] = 8;
         $params['savename'] = FCPATH . LOKASI_TTE_QR . $qr_image;
