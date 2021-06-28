@@ -318,7 +318,7 @@
     public function get_data_surat($id=0)
     {
         $sql = "SELECT u.*,p.pamong_nama,p.pamong_nik,p.jabatan,
-                 pd.nama as nama_pd,pd.nik as nik_pd 
+                 pd.nama as nama_pd,pd.nik as nik_pd, p.id_pend as pamong_id_pend 
                     FROM tanda_tangan_surat u 
 	            LEFT JOIN tweb_desa_pamong p on u.id_pamong = p.pamong_id 
 	            LEFT JOIN tweb_penduduk pd on pd.id = u.id_pend  WHERE u.id = ?";
@@ -365,6 +365,13 @@
         return null;
     }
 
+    public function get_penduduk($id)
+    {
+        $sql = "SELECT * FROM tweb_penduduk WHERE id = ?";
+        $query = $this->db->query($sql, $id);
+        $data = $query->row_array();
+        return $data;
+    }
 
 
 }
