@@ -185,7 +185,7 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
         $qr_image =$ttd['id'].'-'.$ttd['bulan'] . '_'.$ttd['tahun'] . '_'  . str_replace('/', '-', $ttd['nama_surat']) .$ttd['nomor_surat']. '.png';
         //print_r($qr_image);
         //$params['data'] = 'Dari: ' . $nm_instansi . ' -- ' . 'No. Agenda: ' . $no_agenda . ' -- ' . 'Tgl: ' . tgl_login($create_date);
-        $params['data'] = $ttd['nomor_surat'].' - '.$ttd['tanggal'].' - '.substr($ttd[nam_surat], 0, strpos($ttd[nama_surat], ".") - 1) ;
+        $params['data'] = $ttd['nomor_surat'].' - '.$ttd['tanggal'].' - '.substr($ttd[nam_surat], 0, strpos($ttd[nama_surat], ".") - 1);
         $params['level'] = 'H';
         $params['size'] = 8;
         $params['savename'] = FCPATH . LOKASI_TTE_QR . $qr_image;
@@ -295,11 +295,20 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
                     $pdf->MultiCell(80, 21, strtoupper($ttd['jabatan'] . ' ' . $this->config_model->get_data()['nama_desa']), 0, 'C', 0, 0, 120, 206, true);
                     //Gambar Ttd
                     //$pdf->Image(FCPATH . LOKASI_TTE_SPESIMEN . $ttd['file_spesimen'], 132, 205, 70, 45, 'PNG');
-                    $pdf->SetFont('Helvetica', 'BU', 7);
-                    $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nama']), 0, 'C', 0, 0, 120, 219, true);
+                    if(empty($ttd['pamong_nama'])){
+                        $pamong = $this->tanda_tangan_model->get_penduduk($ttd['pamong_id_pend']);
+                        $pdf->SetFont('Helvetica', 'BU', 7);
+                        $pdf->MultiCell(80, 21, strtoupper($pamong['nama']), 0, 'C', 0, 0, 120, 219, true);
+                        $pdf->SetFont('Helvetica', '', 7);
+                        $pdf->MultiCell(80, 21, strtoupper($pamong['nik']), 0, 'C', 0, 0, 120, 222, true);
 
-                    $pdf->SetFont('Helvetica', '', 7);
-                    $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nik']), 0, 'C', 0, 0, 120, 222, true);
+                    }else{
+                        $pdf->SetFont('Helvetica', 'BU', 7);
+                        $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nama']), 0, 'C', 0, 0, 120, 219, true);
+                        $pdf->SetFont('Helvetica', '', 7);
+                        $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nik']), 0, 'C', 0, 0, 120, 222, true);
+
+                    }
 
                     //Gambar BSrE
                     $pdf->Image(FCPATH . LOKASI_TTE_QR . 'BSrE.png', 180, 218, 16, 6, 'PNG');
@@ -331,12 +340,21 @@ class Tanda_tangan_pimpinan extends Admin_Controller {
             $pdf->MultiCell(80, 21, strtoupper($ttd['jabatan'] . ' ' . $this->config_model->get_data()['nama_desa']), 0, 'C', 0, 0, 120, 206, true);
             //Gambar Ttd
             //$pdf->Image(FCPATH . LOKASI_TTE_SPESIMEN . $ttd['file_spesimen'], 132, 205, 70, 45, 'PNG');
-            $pdf->SetFont('Helvetica', 'BU', 7);
-            $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nama']), 0, 'C', 0, 0, 120, 219, true);
+            // jika pamong berasal dari penduduk
+            if(empty($ttd['pamong_nama'])){
+                $pamong = $this->tanda_tangan_model->get_penduduk($ttd['pamong_id_pend']);
+                $pdf->SetFont('Helvetica', 'BU', 7);
+                $pdf->MultiCell(80, 21, strtoupper($pamong['nama']), 0, 'C', 0, 0, 120, 219, true);
+                $pdf->SetFont('Helvetica', '', 7);
+                $pdf->MultiCell(80, 21, strtoupper($pamong['nik']), 0, 'C', 0, 0, 120, 222, true);
 
-            $pdf->SetFont('Helvetica', '', 7);
-            $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nik']), 0, 'C', 0, 0, 120, 222, true);
+            }else{
+                $pdf->SetFont('Helvetica', 'BU', 7);
+                $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nama']), 0, 'C', 0, 0, 120, 219, true);
+                $pdf->SetFont('Helvetica', '', 7);
+                $pdf->MultiCell(80, 21, strtoupper($ttd['pamong_nik']), 0, 'C', 0, 0, 120, 222, true);
 
+            }
             //Gambar BSrE
             $pdf->Image(FCPATH . LOKASI_TTE_QR . 'BSrE.png', 180, 218, 16, 6, 'PNG');
             $pdf->Line(15, 267, 200, 267);
